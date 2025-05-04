@@ -1,0 +1,65 @@
+SYSTEM DOCUMENTATION
+
+Overview
+The Furniture E-Commerce System is a web-based platform designed to facilitate the online selling and purchasing of furniture products. It includes features tailored for customers and administrative users to ensure a smooth shopping experience and efficient store management.
+
+System Requirements
+
+General Requirements
+-Responsive web design for desktop, tablet, and mobile devices.
+-Built with modern web technologies (e.g., React.js, TypeScript, TailwindCSS, Shadcn , Node.js, Express.js, MySQL, Prisma).
+-Database for storing user accounts, product data, and transactions.
+-Authentication and session management for users and admin.
+
+Customer Side
+UI/UX Layout Requirements
+
+-Navigation Bar (divided into 3 sections):
+-Left Section: Brand logo or store name.
+-Center Section: Navigation links (Home, Shop).
+
+-Right Section: Icons or links for:
+Search bar.
+Cart icon (with item count badge).
+Profile dropdown (contains: Account, Purchase History, Logout).
+
+Function Requirements
+-Users can register and log in securely.
+-Users can browse and search for furniture.
+-Users can view product details (images, specs, price, etc.).
+-Users can add items to the cart.
+-Users can update or remove items in their cart.
+-Users can place orders through a checkout process.
+-Users can view order history and track status.
+-Users can manage profile information.
+-Email notification for order confirmation (optional).
+
+Admin Side
+
+UI/UX Layout Requirements
+-Admin dashboard for quick statistics (e.g., total orders, revenue, most sold items).
+-Sidebar navigation for:
+-Product Management.
+-Order Management.
+-User Management.
+-Category Management.
+-Reports (optional).
+
+Functional Requirements
+-Admin login with secure authentication.
+-Admin can manage product listings:
+-Add new products with name, category, price, image, and description.
+-Edit or delete existing products.
+-Admin can view and manage customer orders:
+-Change order status (Pending, Shipped, Delivered, Cancelled).
+-View order details.
+-Admin can manage customer accounts.
+-Admin can manage categories or tags for products.
+Optional: Admin can generate reports on sales and inventory.
+
+Optional Features
+Wishlist for customers.
+Customer reviews and ratings.
+Discount codes or promo management.
+Product filtering by category, price, rating, etc.
+Inventory management and alerts for low stock.
