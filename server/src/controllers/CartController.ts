@@ -76,18 +76,40 @@ const addItemToCart = async (req: Request, res: Response) =>{
             return;
         }
 
-        await Promise.all(cartItems.map((item) =>{
-            prisma.cartItem.create({
-                data:{
-                    cartId: shoppingCart.shoppingCartId,
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    price: item.price
+        await Promise.all(cartItems.map(async (item) =>{
+
+            const isProductExist = await prisma.cartItem.findFirst({
+                where: {
+                    AND: [
+                        { productId: item.productId },
+                        { cartId: shoppingCart.shoppingCartId }
+                    ]
                 }
-            })
+            });
+
+            if(isProductExist){
+                await prisma.cartItem.update({
+                    where:{
+                        cartItemId: isProductExist.cartItemId
+                    },
+                    data:{
+                        quantity: isProductExist.quantity + 1
+                    }
+                });
+            }
+            else{
+                await prisma.cartItem.create({
+                    data:{
+                        cartId: shoppingCart.shoppingCartId,
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        price: item.price
+                    }
+                })
+            }     
         }));
 
-        res.status(200).json({ message: "Items added to cart successfully" });
+        res.status(200).json({ message: "Cart Operatin Successfully" });
         
     } catch (error: any) {
         console.error("Error adding items to cart:", error.message);
@@ -113,9 +135,68 @@ const deleteItemInCart = async (req: Request, res: Response) =>{
         res.status(200).json({ message: "Item deleted successfully" });
         
     } catch (error: any) {
-        console.error("Error adding items to cart:", error.message);
+        console.error("Error deleting item from cart:", error.message);
         res.status(500).json({ message: "Internal Server Error" });
     }  
 }
 
-export { getCartByUserId, addItemToCart, deleteItemInCart }
+const updateCart = async (req: Request, res: Response) =>{
+    const { id: cartItemId } = req.params;
+
+    const { action } = req.body
+
+    try {
+        if (!action) {
+            res.status(400).json({ message: "Action is required" });
+            return;
+        }
+        
+        const cartItem = await prisma.cartItem.findUnique({
+            where:{
+                cartItemId: cartItemId
+            },
+        });
+    
+        if(!cartItem){
+            res.status(404).json({message: "Cart Item not found"})
+            return;
+        }
+        
+        const normalizedAction = action?.toLowerCase();
+
+        if(normalizedAction === "increment"){
+           
+            await prisma.cartItem.update({
+                where:{
+                    cartItemId: cartItem.cartItemId
+                },
+                data:{
+                    quantity: cartItem.quantity + 1
+                }
+            });
+
+        }else if(normalizedAction === "decrement"){
+    
+            if(cartItem.quantity <= 1){
+                res.status(400).json({message: "Quantity cannot be less than 1"})
+                return;
+            };
+    
+            await prisma.cartItem.update({
+                where:{
+                    cartItemId: cartItem.cartItemId
+                },
+                data:{
+                    quantity: cartItem.quantity - 1
+                }
+            });
+        }
+
+        res.status(200).json({message: "Cart updated succesffuly"})
+    } catch (error: any) {
+        console.error("Error updating items in cart:", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+export { getCartByUserId, addItemToCart, deleteItemInCart, updateCart }

@@ -11,6 +11,8 @@ import { fileURLToPath } from 'url';
 import cartRouter from './routes/CartRoute';
 import authRouter from './routes/AuthRoute';
 import generateToken from './utils/generateToken';
+import userRouter from './routes/UserRoute';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,7 +35,8 @@ app.use(logger);
 app.use('/api/category', categoryRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
-app.use('/api/auth', authRouter)
+app.use('/api/auth', authRouter);
+app.use('/api/user', userRouter);
 
 
 app.listen(PORT, () =>{

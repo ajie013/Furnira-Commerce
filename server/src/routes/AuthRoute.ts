@@ -5,11 +5,11 @@ import authCustomer from "../middleware/authCustomer";
 
 const authRouter = express.Router();
 
-authRouter.post('/sign-up', authController.signUp)
-authRouter.post('/sign-in', authController.signIn)
-authRouter.post('/sign-out', authController.signOut)
+authRouter.post('/sign-up', authController.signUp); //sign up user
+authRouter.post('/sign-in', authController.signIn);  //sign in user
+authRouter.post('/sign-out', authController.signOut); //sign out user
 
-authRouter.get('/check-customer',authCustomer, authController.checkAuthCustomer);
-authRouter.get('/check-admin',authAdmin, authController.checkAuthAdmin);
+authRouter.get('/check-customer',authCustomer, authController.checkAuthCustomer); //get the signed in customer
+authRouter.get('/check-admin',authAdmin, authController.checkAuthAdmin); //get the signed in admin
 
 export default authRouter

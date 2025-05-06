@@ -61,8 +61,6 @@ const signUp =  async (req: Request, res: Response) =>{
                 username: user.username,
                 phoneNumber: user.phoneNumber,
                 password: hashedPassword,
-                createdAt: new Date(),
-                updatedAt: new Date(),
                 isArchive: false,
                 role: "Customer"
             }

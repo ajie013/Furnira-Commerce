@@ -99,8 +99,6 @@ const createProduct = async (req: Request, res: Response) =>{
                 price: product.price,
                 categoryId: product.categoryId,
                 isArchive: product.isArchive,
-                createdAt: new Date(),
-                updatedAt: new Date()
             }
         });
 

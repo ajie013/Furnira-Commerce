@@ -24,15 +24,19 @@ model User{
   role String
   phoneNumber String @unique
   isArchive Boolean
-  createdAt DateTime
-  updatedAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   cart      ShoppingCart? @relation("UserCart")
+  Order Order[] @relation()
+
 }
 
 model Category{
   categoryId String @id @default(uuid())
   name String @unique
   product Product[] @relation()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Product{
@@ -41,12 +45,13 @@ model Product{
   price Decimal @db.Decimal(8,2)
   image String?
   stock Int
-  createdAt DateTime 
-  updatedAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   isArchive Boolean
   Category Category @relation(fields: [categoryId], references: [categoryId])
   categoryId String
   cartItems   CartItem[] @relation()
+  OrderItem OrderItem[]
 }
 
 model ShoppingCart {
@@ -56,6 +61,9 @@ model ShoppingCart {
   quantity       Int        
   totalAmount    Decimal     @db.Decimal(10, 2)
   cartItems      CartItem[] @relation()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
 }
 
 model CartItem {
@@ -66,4 +74,26 @@ model CartItem {
   productId  String
   quantity   Int          
   price      Decimal       @db.Decimal(10, 2)
+  
 }
+
+model Order {
+  orderId     String       @id @default(uuid())
+  user        User         @relation(fields: [userId], references: [userId])
+  userId      String
+  totalAmount Decimal      @db.Decimal(10, 2)
+  status      String       // e.g., 'Pending', 'Shipped', 'Delivered'
+  createdAt   DateTime     @default(now())
+  orderItems  OrderItem[]
+}
+
+model OrderItem {
+  orderItemId String   @id @default(uuid())
+  order       Order    @relation(fields: [orderId], references: [orderId])
+  orderId     String
+  product     Product  @relation(fields: [productId], references: [productId])
+  productId   String
+  quantity    Int
+  price       Decimal  @db.Decimal(10, 2)
+}
+
