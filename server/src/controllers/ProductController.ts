@@ -5,7 +5,6 @@ interface NewProduct{
     name: string
     price: number,
     stock: number
-    isArchive: boolean
     categoryId: string
 }
 
@@ -95,10 +94,10 @@ const createProduct = async (req: Request, res: Response) =>{
             data:{
                 name: product.name,
                 image: fileName || null,
-                stock: product.stock,
-                price: product.price,
+                stock: Number(product.stock),
+                price: Number(product.price),
                 categoryId: product.categoryId,
-                isArchive: product.isArchive,
+                isArchive: false,
             }
         });
 
@@ -112,7 +111,7 @@ const createProduct = async (req: Request, res: Response) =>{
 
 const deleteProduct = async (req: Request, res: Response) =>{
     const { id: productId } = req.params;
-
+    console.log(productId)
     try {
         const isProductExist = await prisma.product.findUnique({
             where: {
@@ -130,7 +129,7 @@ const deleteProduct = async (req: Request, res: Response) =>{
                 productId: productId
             },
             data:{
-                isArchive: false
+                isArchive: true
             }
          
         });
@@ -162,7 +161,8 @@ const updatedProduct = async (req: Request, res: Response) =>{
 
         const updateData: any = {
             name: product.name,
-            price: product.price,
+            price: Number(product.price),
+            stock: Number(product.stock),
             categoryId: product.categoryId
         };
 
