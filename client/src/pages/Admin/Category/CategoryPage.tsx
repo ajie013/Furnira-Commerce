@@ -20,7 +20,8 @@ type GridCategory = {
 const CategoryPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
 
   const { isLoading, data: categoryList, refetch, error } = useQuery({
     queryKey: ['category-list'],
@@ -34,12 +35,12 @@ const CategoryPage = () => {
 
   const handleUpdateCategory = (categoryId: string) => {
     setIsUpdateModalOpen(true);
-    setSelectedCategoryId(categoryId);
+    setSelectedCategory(categoryId);
   };
 
   const handleAddCategory = () => {
     setIsAddModalOpen(true);
-    setSelectedCategoryId(null);
+    setSelectedCategory(null);
   };
 
   const CustomButtonComponent = ({ categoryId }: { categoryId: string }) => {
@@ -117,7 +118,7 @@ const CategoryPage = () => {
       <UpdateCategory
         refetch={refetch}
         open={isUpdateModalOpen}
-        categoryId={selectedCategoryId || null}
+        categoryId={selectedCategory || null}
         onOpenChange={(isOpen) => setIsUpdateModalOpen(isOpen)}
       />
     </div>

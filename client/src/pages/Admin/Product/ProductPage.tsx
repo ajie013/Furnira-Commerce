@@ -30,7 +30,7 @@ const ProductPage = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
-    const { isLoading, data: productList, refetch } = useQuery({
+    const { isLoading, data: productList, refetch, error } = useQuery({
         queryKey: ['product-list'],
         queryFn: getAllProducts,
         select: (data) =>
@@ -165,6 +165,11 @@ const ProductPage = () => {
 
     if (isLoading) {
         return <Loader className="animate-spin size-10" />;
+    }
+
+        
+    if (error) {
+        return <div className="text-red-500 p-4 rounded">An error occurred while loading products. Please try again later.</div>;
     }
 
     return (

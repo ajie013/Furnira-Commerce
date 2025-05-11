@@ -28,7 +28,6 @@ model User{
   updatedAt DateTime @updatedAt
   cart      ShoppingCart? @relation("UserCart")
   Order Order[] @relation()
-
 }
 
 model Category{

@@ -7,7 +7,7 @@ import useAdminAuthStore from './store/useAdminAuthStore'
 const AdminDashboardPage = lazy(() => import('./pages/Admin/DashboardPage'))
 const AdminProductPage = lazy(() => import('./pages/Admin/Product/ProductPage'))
 const AdminCategoryPage = lazy(() => import('./pages/Admin/Category/CategoryPage'))
-const AdminUserPage = lazy(() => import('./pages/Admin/UserPage'))
+const AdminUserPage = lazy(() => import('./pages/Admin/User/UserPage'))
 const AdminOrderPage = lazy(() => import('./pages/Admin/OrderPage'))
 
 const App = () =>{

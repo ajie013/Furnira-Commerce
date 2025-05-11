@@ -31,13 +31,4 @@ const updateCategoryApi = async (categoryId: string, name: string) => {
     return res.data;
 };
 
-// const deleteCategoryApi = async (categoryId: string) =>{
-//     try {
-//         await axiosInstance.delete(`/category/${categoryId}`);
-
-//     } catch (error: any) {
-//         toast.error(error.response.data.message)
-//     }
-// }
-
 export {getAllCategoriesApi, getCategoryByIdApi, createCategoryApi, updateCategoryApi}
