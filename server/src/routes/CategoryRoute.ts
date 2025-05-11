@@ -6,6 +6,6 @@ const categoryRouter = express.Router();
 categoryRouter.post('/', categoryController.createCategory); //create category
 categoryRouter.get('/category-list', categoryController.getAllCategory) //get all category
 categoryRouter.get('/:id', categoryController.getCategory) //get specific category
-categoryRouter.put('/:updateCategory', categoryController.updateCategory) //update existing category
+categoryRouter.put('/:id', categoryController.updateCategory) //update existing category
 
 export default categoryRouter

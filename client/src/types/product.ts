@@ -1,12 +1,13 @@
-import type { Category } from "./category"
 
 export interface Product{
     productId: string
     name: string,
     price: number,
-    image?: string
+    image: string | null
     stock: number
-    Category: Category
+    categoryId: string
+    isArchive: boolean
+    category: string
 }
 
 export interface AddProductFormData{

@@ -1,18 +1,15 @@
-import {Response, Request} from 'express'
+import { Response, Request } from 'express';
 import prisma from '../lib/db';
 
-interface NewProduct{
-    name: string
-    price: number,
-    stock: number
-    categoryId: string
+interface NewProduct {
+    name: string;
+    price: number;
+    stock: number;
+    categoryId: string;
 }
 
-const getAllProducts = async (req: Request, res: Response) =>{
-   
-
+const getAllProducts = async (req: Request, res: Response): Promise<void> => {
     try {
-   
         const productList = await prisma.product.findMany({
             where: {
                 isArchive: false
@@ -22,32 +19,24 @@ const getAllProducts = async (req: Request, res: Response) =>{
             }
         });
 
-        const updatedProductList = productList.map((item) => {
-            if(item.image){
-                return{
-                    ...item,
-                    image: `http://localhost:8080/public/${item.image}`,
-                    price: Number(item.price)
-                }
-            }
-            else{
-                return{...item, price: Number(item.price)}
-            }
-        })
+        const updatedProductList = productList.map((item) => ({
+            ...item,
+            category: item.Category.name,
+            image: item.image ? `http://localhost:8080/public/${item.image}` : null,
+            price: Number(item.price)
+        }));
 
-        res.status(200).json(updatedProductList)
-                
+        res.status(200).json(updatedProductList);
     } catch (error: any) {
-        console.log('Error in getting all products ', error.message);
-        res.status(500).json({message: "Internal Server Error"})
+        console.error('Error in getting all products ', error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
-const getProduct = async (req: Request, res: Response) =>{
+const getProduct = async (req: Request, res: Response): Promise<void> => {
     const { id: productId } = req.params;
 
     try {
-   
         const product = await prisma.product.findUnique({
             where: {
                 productId: productId
@@ -57,41 +46,45 @@ const getProduct = async (req: Request, res: Response) =>{
             }
         });
 
-        if(!product){
-            res.status(404).json({message: "Product not found"});
+        if (!product) {
+            res.status(404).json({ message: "Product not found" });
             return;
         }
 
-        if( product.image){
-            product.image =  `http://localhost:8080/public/${product.image}`
-        }
+        const formattedProduct = {
+            ...product,
+            category: product.Category.name,
+            image: product.image ? `http://localhost:8080/public/${product.image}` : null
+        };
 
-        res.status(200).json(product)
-                
+        res.status(200).json(formattedProduct);
     } catch (error: any) {
-        console.log('Error in getting a product ', error.message);
-        res.status(500).json({message: "Internal Server Error"})
+        console.error('Error in getting a product ', error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
-const createProduct = async (req: Request, res: Response) =>{
+const createProduct = async (req: Request, res: Response): Promise<void> => {
     const product: NewProduct = req.body;
-    const fileName = req.file ? req.file.filename : null; 
-   
+    const fileName = req.file ? req.file.filename : null;
+
     try {
         const isProductNameExist = await prisma.product.findFirst({
             where: {
-                name: product.name
+                AND: [
+                    { name: product.name },
+                    { categoryId: product.categoryId },
+                ]
             }
         });
 
-        if(isProductNameExist){
-            res.status(400).json({message: "Product already exist"});
+        if (isProductNameExist) {
+            res.status(400).json({ message: "Product already exists" });
             return;
         }
 
         await prisma.product.create({
-            data:{
+            data: {
                 name: product.name,
                 image: fileName || null,
                 stock: Number(product.stock),
@@ -101,17 +94,16 @@ const createProduct = async (req: Request, res: Response) =>{
             }
         });
 
-        res.status(200).json({message: "New product has been created"})
-        
+        res.status(200).json({ message: "New product has been created" });
     } catch (error: any) {
-        console.log('Error in creating new product: ', error.message);
-        res.status(500).json({message: "Internal Server Error"})
+        console.error('Error in creating new product: ', error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
-const deleteProduct = async (req: Request, res: Response) =>{
+const deleteProduct = async (req: Request, res: Response): Promise<void> => {
     const { id: productId } = req.params;
-    console.log(productId)
+
     try {
         const isProductExist = await prisma.product.findUnique({
             where: {
@@ -119,33 +111,31 @@ const deleteProduct = async (req: Request, res: Response) =>{
             }
         });
 
-        if(!isProductExist){
-            res.status(404).json({message: "Product not found"});
+        if (!isProductExist) {
+            res.status(404).json({ message: "Product not found" });
             return;
         }
-   
+
         await prisma.product.update({
             where: {
                 productId: productId
             },
-            data:{
+            data: {
                 isArchive: true
             }
-         
         });
-                
-        res.status(200).json({message: "Product deleted"})
-                
-    } catch (error: any) {
-        console.log('Error in deleting a product ', error.message);
-        res.status(500).json({message: "Internal Server Error"})
-    }
-}
 
-const updatedProduct = async (req: Request, res: Response) =>{
+        res.status(200).json({ message: "Product deleted" });
+    } catch (error: any) {
+        console.error('Error in deleting a product ', error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+const updatedProduct = async (req: Request, res: Response): Promise<void> => {
     const { id: productId } = req.params;
-    const product = req.body
-    const fileName = req.file ? req.file.filename : null; 
+    const product = req.body;
+    const fileName = req.file ? req.file.filename : null;
 
     try {
         const isProductExist = await prisma.product.findUnique({
@@ -154,8 +144,8 @@ const updatedProduct = async (req: Request, res: Response) =>{
             }
         });
 
-        if(!isProductExist){
-            res.status(400).json({message: "Product not found"});
+        if (!isProductExist) {
+            res.status(400).json({ message: "Product not found" });
             return;
         }
 
@@ -176,11 +166,16 @@ const updatedProduct = async (req: Request, res: Response) =>{
         });
 
         res.status(200).json({ message: "Product updated successfully" });
-
     } catch (error: any) {
-        console.log('Error in updating a product ', error.message);
-        res.status(500).json({message: "Internal Server Error"})
+        console.error('Error in updating a product ', error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
-export { createProduct, getAllProducts, getProduct, deleteProduct, updatedProduct }
+export {
+    createProduct,
+    getAllProducts,
+    getProduct,
+    deleteProduct,
+    updatedProduct
+};

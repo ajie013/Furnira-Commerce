@@ -1,4 +1,4 @@
-import { getAllCategoriesApi } from "@/api/category";
+import { getAllCategoriesApi } from "@/api/categoryApi";
 import {
     Dialog,
     DialogContent,
@@ -24,12 +24,11 @@ interface AddProductProps {
 }
 
 const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) => {
-
     const [formData, setFormData] = useState<AddProductFormData>({
         name: '',
         price: null,
         stock: null,
-        categoryId: null
+        categoryId: null,
     });
 
     const imageRef = useRef<HTMLInputElement | null>(null);
@@ -39,12 +38,15 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
     const { data: categoryList, isLoading: isLoadingCategories } = useQuery({
         queryKey: ["category-list"],
         queryFn: getAllCategoriesApi,
-        enabled: open
+        enabled: open,
     });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
-        setFormData(prev => ({ ...prev, [id]: value }));
+        setFormData(prev => ({
+            ...prev,
+            [id]: id === "price" || id === "stock" ? Number(value) : value,
+        }));
     };
 
     const addProductMutation = useMutation({
@@ -53,28 +55,26 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
             toast.success("Product created!");
             onOpenChange(false);
             refetch();
+            setFormData({
+                name: '',
+                price: null,
+                stock: null,
+                categoryId: null,
+            });
         },
-        onError: () => {
-            toast.error("Failed to create product.");
+        onError: (error: any) => {
+            toast.error(error?.response?.data?.message || "Failed to create product");
         },
     });
-    
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!formData.categoryId || !formData.name || !formData.price || !formData.stock){
+        if (!formData.categoryId || !formData.name || !formData.price || !formData.stock) {
             return toast.error('Fill all required information');
         }
-          
-        addProductMutation.mutate();
 
-        setFormData({
-            name: '',
-            price: null,
-            stock: null,
-            categoryId: null
-        })
+        addProductMutation.mutate();
     };
 
     const handleDeleteImage = () => {
@@ -106,7 +106,6 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
                     <DialogHeader>
                         <DialogTitle>Add Product</DialogTitle>
                         <DialogDescription>
-
                             {isLoadingCategories ? (
                                 <Loader className="animate-spin size-10" />
                             ) : (
@@ -135,11 +134,15 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
                                                 </>
                                             )}
                                         </div>
-                                        <Button type="button" onClick={uploadImage}>
-                                            Upload Product Image
+                                        <Button
+                                            type="button"
+                                            disabled={addProductMutation.isPending}
+                                            onClick={uploadImage}
+                                        >
+                                            Upload Image
                                         </Button>
                                     </div>
-                                
+
                                     {/* Product Name */}
                                     <div className="mt-2">
                                         <Label htmlFor="name">Product Name</Label>
@@ -150,7 +153,7 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
                                             onChange={handleChange}
                                         />
                                     </div>
-                                
+
                                     {/* Price */}
                                     <div className="mt-2">
                                         <Label htmlFor="price">Price</Label>
@@ -161,7 +164,7 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
                                             onChange={handleChange}
                                         />
                                     </div>
-                                
+
                                     {/* Stock */}
                                     <div className="mt-2">
                                         <Label htmlFor="stock">Stock Quantity</Label>
@@ -172,7 +175,7 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
                                             onChange={handleChange}
                                         />
                                     </div>
-                                
+
                                     {/* Category */}
                                     <div className="mt-2">
                                         <Label htmlFor="categoryId">Category</Label>
@@ -181,27 +184,27 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
                                             onChange={handleChange}
                                             className="focus-visible:border-black flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 shadow-xs"
                                         >
-                                            <option value="" disabled selected>
+                                            <option value="" disabled>
                                                 Please select a product category
                                             </option>
-                                            {categoryList && categoryList.map((item: Category) => (
-                                                <option key={item.categoryId} value={item.categoryId}>
-                                                    {item.name}
-                                                </option>
-                                            ))}
+                                            {categoryList &&
+                                                categoryList.map((item: Category) => (
+                                                    <option key={item.categoryId} value={item.categoryId}>
+                                                        {item.name}
+                                                    </option>
+                                                ))}
                                         </select>
                                     </div>
-                                
+
                                     {/* Submit */}
                                     <Button className="w-full mt-4 p-2" disabled={addProductMutation.isPending}>
-                                    {addProductMutation.isPending ? (
-                                        <Loader className="animate-spin w-4 h-4" />
-                                    ) : (
-                                        "Add"
-                                    )}
+                                        {addProductMutation.isPending ? (
+                                            <Loader className="animate-spin w-4 h-4" />
+                                        ) : (
+                                            "Add"
+                                        )}
                                     </Button>
                                 </form>
-                            
                             )}
                         </DialogDescription>
                     </DialogHeader>

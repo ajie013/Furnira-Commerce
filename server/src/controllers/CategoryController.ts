@@ -61,7 +61,7 @@ const getCategory = async (req: Request, res: Response) =>{
 const updateCategory = async (req: Request, res: Response) =>{
     const { id: categoryId } = req.params;
     const { name } = req.body;
-
+    console.log("whats up",name)
     try {
         const isCategoryExist = await prisma.category.findUnique({
             where: {
@@ -74,12 +74,28 @@ const updateCategory = async (req: Request, res: Response) =>{
             return;
         };
 
+       
+        const duplicateCategory = await prisma.category.findFirst({
+            where: {
+                name,
+                NOT: {
+                categoryId,
+                },
+            },
+            });
+        if (duplicateCategory) {
+           res
+                .status(400)
+                .json({ message: "A category with this name already exists" });
+                return;
+            }
+
         await prisma.category.update({
             where: {
                 categoryId
             },
             data:{
-                name
+                name: name
             }
         })
         
