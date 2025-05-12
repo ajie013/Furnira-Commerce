@@ -1,8 +1,8 @@
 import axiosInstance from "@/lib/axios";
 import type { AddProductFormData, Product } from "@/types/product";
 
-const getAllProducts = async () : Promise<Product[]> => {
-    const productList = await axiosInstance.get('/product/product-list');
+const getAllProductsApi = async () : Promise<Product[]> => {
+    const productList = await axiosInstance.get('/product/product-list', );
 
     return productList.data;
 };
@@ -60,7 +60,7 @@ const deleteProductApi = async (productId: string) => {
 };
 
 export {
-    getAllProducts,
+    getAllProductsApi,
     createProductApi,
     updateProductApi,
     getProductByIdApi,

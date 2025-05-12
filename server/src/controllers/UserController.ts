@@ -28,12 +28,22 @@ const getUserById = async (req: Request, res: Response) =>{
 const getAllUsers = async (req: Request, res: Response) =>{
     try {
         const userList = await prisma.user.findMany({
-            where:{
-                isArchive: false
+        });
+
+        const users = userList.map((user) => {
+            return {
+                userId: user.userId,
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+                isArchive: user.isArchive,
+                role: user.role
             }
         });
 
-        res.status(200).json(userList)
+        res.status(200).json(users)
         
     }catch (error: any) {
         console.log("Error in getting all users: ", error);

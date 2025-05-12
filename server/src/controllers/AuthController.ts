@@ -121,7 +121,8 @@ const signIn = async (req: Request, res: Response) => {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            phoneNumber: user.phoneNumber
+            phoneNumber: user.phoneNumber,
+            role: user.role,
         });
 
     } catch (error: any) {
@@ -129,7 +130,6 @@ const signIn = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
-
 
 const signOut = (req: Request, res: Response) =>{
     const { role } = req.body;

@@ -15,8 +15,9 @@ const SignIn = () => {
         password: '',
         role: "Admin"
     });
+    const [isSigningIn, setIsSigningIn] = useState(false);
 
-    const { isSigningIn, setUserAdmin} = useAdminAuthStore();
+    const {  setUserAdmin} = useAdminAuthStore();
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -32,11 +33,20 @@ const SignIn = () => {
 
     const submitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (validateForm() === true) {
+        if (!validateForm()) return;
+        setIsSigningIn(true);
+        try {
             const user = await signInApi(formData);
-            setUserAdmin(user)
+            setUserAdmin(user);
+        } catch (error: any) {
+            console.error('Sign-in failed:', error);
+            toast.error(error.response?.data?.message || "Sign-in failed");
+            // Optionally set an error message state here
+        } finally {
+            setIsSigningIn(false);
         }
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

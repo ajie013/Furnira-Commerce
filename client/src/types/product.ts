@@ -1,3 +1,4 @@
+import type { Category } from "./category"
 
 export interface Product{
     productId: string
@@ -8,7 +9,9 @@ export interface Product{
     categoryId: string
     isArchive: boolean
     category: string
+    Category?: Category
 }
+
 
 export interface AddProductFormData{
     name: string

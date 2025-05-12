@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { deleteProductApi, getAllProducts } from '@/api/productApi';
+import { deleteProductApi, getAllProductsApi } from '@/api/productApi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AgGridReact } from 'ag-grid-react';
 import { Button } from '@/components/ui/button';
@@ -32,7 +32,7 @@ const ProductPage = () => {
 
     const { isLoading, data: productList, refetch, error } = useQuery({
         queryKey: ['product-list'],
-        queryFn: getAllProducts,
+        queryFn: getAllProductsApi,
         select: (data) =>
             data.map((item: Product) => ({
                 productId: item.productId,

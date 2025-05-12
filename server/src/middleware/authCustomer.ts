@@ -36,9 +36,7 @@ const authCustomer = async (req: Request, res: Response, next: NextFunction) => 
                 email: true,
                 phoneNumber: true,
                 role: true,
-                createdAt: true,
-                updatedAt: true,
-                isArchive: true,
+              
             }
         })
 
