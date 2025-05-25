@@ -1,7 +1,16 @@
 import axiosInstance from "@/lib/axios";
 import type { AddProductFormData, Product } from "@/types/product";
 
+
 const getAllProductsApi = async () : Promise<Product[]> => {
+
+    await new Promise ((resolve, reject) =>{
+        setTimeout(() => {
+            resolve('')
+        }, 2000);
+    })
+   
+   
     const productList = await axiosInstance.get('/product/product-list', );
 
     return productList.data;

@@ -9,6 +9,13 @@ const getUserById = async (req: Request, res: Response) =>{
         const user = await prisma.user.findUnique({
             where:{
                 userId: userId
+            },
+            select:{
+                userId: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                phoneNumber: true,
             }
         });
 
@@ -54,7 +61,8 @@ const getAllUsers = async (req: Request, res: Response) =>{
 const updateUser = async (req: Request, res: Response) =>{
     try {
         const { id: userId } = req.params;
-        const { username, password, firstName, lastName, email, phoneNumber } = req.body;
+      
+        const {firstName, lastName, email, phoneNumber } = req.body;
 
         await prisma.user.update({
             where: {
@@ -62,8 +70,8 @@ const updateUser = async (req: Request, res: Response) =>{
             },
 
             data:{
-                username,
-                password, 
+             
+               
                 firstName, 
                 email, 
                 lastName, 

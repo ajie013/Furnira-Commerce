@@ -15,4 +15,9 @@ const deleteUserApi = async (userId: string) => {
   return response.data;
 }
 
-export { getAllUsersApi, getUserByIdApi, deleteUserApi };
+
+const updateUserApi = async (userId: string, data: any) => {
+  const response = await axiosInstance.put(`/user/${userId}`, data);
+  return response.data;
+}
+export { getAllUsersApi, getUserByIdApi, deleteUserApi, updateUserApi };

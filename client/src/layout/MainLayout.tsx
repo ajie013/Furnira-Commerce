@@ -20,7 +20,7 @@ const MainLayout = () => {
   return (
      <div className="w-full min-h-screen bg-[#F5F5F5] text-[#333]">
             <CustomerNav />
-            <div className="pt-[10px] w-full min-h-screen flex justify-center items-center px-4 ">
+            <div className="pt-[10px] w-full min-h-screen px-4">
                 <Outlet />
             </div>
             <footer className="bg-gray-800 text-white py-6">

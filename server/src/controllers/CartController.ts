@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 import prisma from '../lib/db';
-
+import cartUpdater from '../utils/cartUpdater';
 const getCartByUserId = async (req: Request, res: Response) =>{
     const { id: userId } = req.params;
 
@@ -61,8 +61,7 @@ interface AddItems{
 const addItemToCart = async (req: Request, res: Response) =>{
 
     const { id: userId } = req.params;
-
-    const cartItems: AddItems[] = req.body;
+    const cartItem: AddItems = req.body;
     
     try {
         const shoppingCart = await prisma.shoppingCart.findUnique({
@@ -76,16 +75,16 @@ const addItemToCart = async (req: Request, res: Response) =>{
             return;
         }
 
-        await Promise.all(cartItems.map(async (item) =>{
-
-            const isProductExist = await prisma.cartItem.findFirst({
+         const isProductExist = await prisma.cartItem.findFirst({
                 where: {
                     AND: [
-                        { productId: item.productId },
+                        { productId: cartItem.productId },
                         { cartId: shoppingCart.shoppingCartId }
                     ]
                 }
             });
+
+            let message;
 
             if(isProductExist){
                 await prisma.cartItem.update({
@@ -95,21 +94,31 @@ const addItemToCart = async (req: Request, res: Response) =>{
                     data:{
                         quantity: isProductExist.quantity + 1
                     }
-                });
+                })
+                message = "Item's quantity has been updated"
+
+             
             }
             else{
                 await prisma.cartItem.create({
                     data:{
                         cartId: shoppingCart.shoppingCartId,
-                        productId: item.productId,
-                        quantity: item.quantity,
-                        price: item.price
+                        productId: cartItem.productId,
+                        quantity: cartItem.quantity,
+                        price: cartItem.price
                     }
                 })
-            }     
-        }));
 
-        res.status(200).json({ message: "Cart Operatin Successfully" });
+                   message = "Item added to cart"
+
+               
+            }     
+
+            cartUpdater(shoppingCart.shoppingCartId)
+
+     
+
+        res.status(200).json({message });
         
     } catch (error: any) {
         console.error("Error adding items to cart:", error.message);
@@ -126,11 +135,13 @@ const deleteItemInCart = async (req: Request, res: Response) =>{
     }
 
     try {
-        await prisma.cartItem.delete({
+        const cart = await prisma.cartItem.delete({
             where: {
                 cartItemId: cartItemId
             }
         });
+
+         cartUpdater(cart.cartId)
 
         res.status(200).json({ message: "Item deleted successfully" });
         
@@ -190,6 +201,9 @@ const updateCart = async (req: Request, res: Response) =>{
                     quantity: cartItem.quantity - 1
                 }
             });
+
+            cartUpdater
+            (cartItem.cartId)
         }
 
         res.status(200).json({message: "Cart updated succesffuly"})

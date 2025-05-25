@@ -1,12 +1,14 @@
 import { getAllProductsApi } from '@/api/productApi'
 import { Button } from '@/components/ui/button'
-import type { Category } from '@/types/category'
+import { Skeleton } from '@/components/ui/skeleton'
+import useCartStore from '@/store/useCartStore'
+
 import type { Product } from '@/types/product'
 import formatCurrency from '@/utils/currencyConverter'
 import { useQuery } from '@tanstack/react-query'
 import { Loader } from 'lucide-react'
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+
+import { useNavigate } from 'react-router-dom'
 
 const HomePage = () => {
     const { data: productList, isLoading } = useQuery({
@@ -14,20 +16,23 @@ const HomePage = () => {
         queryFn: () => getAllProductsApi(),    
     })
 
+    const {shoppingCart}  = useCartStore()
+
+    console.log(shoppingCart)
     const navigate = useNavigate()
     const navigateToShop = () => {
         navigate('/shop')
     }
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <Loader></Loader>
-            </div>
-        )
-    }
+    // if (isLoading) {
+    //     return (
+    //         <div className="flex justify-center items-center h-screen">
+    //             <Loader></Loader>
+    //         </div>
+    //     )
+    // }
 
     return (
-        <div className="bg-gray-100 min-h-screen flex flex-col justify-between">
+        <div className="bg-gray-100 min-h-screen flex flex-col justify-between w-full">
             <main className="container mx-auto px-4 py-10">
               
                 <section className="mb-12 relative">
@@ -53,7 +58,24 @@ const HomePage = () => {
                 {/* Product Grid */}
                 <section>
                     <h2 className="text-2xl font-sm text-gray-800 mb-6">Featured Products</h2>
-                    {productList?.length ? (
+                   
+
+                    {isLoading ?  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                         {Array.from({length: 4}).map((_, index) => (
+                        <div
+                            key={index}
+                            className="bg-white border border-gray-200 rounded-lg shadow-md p-4"
+                        >
+                            <Skeleton className="w-full h-48 rounded-md mb-4" />
+                            <Skeleton className="h-6 w-3/4 mb-2" />
+                            <Skeleton className="h-4 w-1/2 mb-4" />
+                            <div className="flex justify-between items-center">
+                                <Skeleton className="h-8 w-24" />
+                                <Skeleton className="h-8 w-24" />
+                            </div>
+                        </div>
+                    ))}
+                    </div> : productList?.length ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {productList.slice(0,4).map((product: Product) => (
                                 <div
@@ -78,6 +100,7 @@ const HomePage = () => {
                     ) : (
                         <p className="text-gray-600">No products available right now.</p>
                     )}
+                   
                 </section>
             </main>
         </div>

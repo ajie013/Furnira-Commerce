@@ -7,6 +7,7 @@ import { signOutApi } from '@/api/authApi';
 import toast from 'react-hot-toast';
 
 const CustomerNav = () => {
+
     const { userCustomer, setUserCustomer } = userCustomerAuthStore();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -74,8 +75,8 @@ const CustomerNav = () => {
                     ))}
                 </nav>
                 {userCustomer ? <div className="flex items-center gap-4 relative justify-center ">
-                    <Link to="/cart" className="text-gray-700 hover:text-[#FF9900] transition">
-                        <ShoppingCart className="w-5 h-5" />
+                    <Link to="/cart" className={`text-gray-700 p-2 hover:text-[#FF9900] rounded-full transition ${pathname === "/cart" && "bg-[#FF9900] hover:text-black"}`}>
+                        <ShoppingCart className="w-5 h-5 " />
                     </Link>
 
                     <div className="relative" ref={dropdownRef}>

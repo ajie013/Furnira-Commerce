@@ -77,6 +77,8 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
         addProductMutation.mutate();
     };
 
+    console.log(formData)
+
     const handleDeleteImage = () => {
         setImageFile(null);
         setProductImage(null);
@@ -184,7 +186,7 @@ const AddProduct: React.FC<AddProductProps> = ({ refetch, open, onOpenChange }) 
                                             onChange={handleChange}
                                             className="focus-visible:border-black flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 shadow-xs"
                                         >
-                                            <option value="" disabled>
+                                            <option value="" selected disabled>
                                                 Please select a product category
                                             </option>
                                             {categoryList &&

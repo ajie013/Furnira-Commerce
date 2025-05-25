@@ -7,6 +7,11 @@ import MainLayout from './layout/MainLayout'
 import HomePage from './pages/Customer/HomePage'
 import SignIn from './pages/Customer/SignInPage'
 import userCustomerAuthStore from './store/useCustomerAuthStore'
+import ProductItem from './pages/Customer/ProductItem'
+import NotFound from './pages/NotFound'
+import PaymentSuccess from './pages/Customer/PaymetSuccess'
+import PaymentCancel from './pages/Customer/PaymentCancel'
+
 
 //Admin Pages
 const AdminDashboardPage = lazy(() => import('./pages/Admin/DashboardPage'));
@@ -18,6 +23,7 @@ const AdminOrderPage = lazy(() => import('./pages/Admin/OrderPage'));
 //Customer Pages
 const CartPage = lazy(() => import('./pages/Customer/CartPage'));
 const ShopPage = lazy(() => import('./pages/Customer/ShopPage'));
+const ProfilePage = lazy(() => import('./pages/Customer/ProfilePage'))
 
 const App = () =>{
 
@@ -32,7 +38,9 @@ const App = () =>{
                         <Route index element={<HomePage/>}></Route>
                         <Route path="/shop" element={<ShopPage/>}></Route>
                         <Route path="/cart" element={userCustomer ? <CartPage/> : <Navigate to="/"/> }></Route>  
-                       
+                        <Route path="/product/:id" element={<ProductItem/>}></Route>
+                        <Route path="/profile" element={userCustomer ? <ProfilePage/> : <Navigate to="/"/> }></Route>  
+                        
                     </Route>
                     <Route path="/sign-in" element={ userCustomer ? <Navigate to="/"/> : <SignIn/>}></Route>
                  
@@ -45,6 +53,11 @@ const App = () =>{
                         <Route path="user" element={userAdmin ? <AdminUserPage /> : <Navigate to="/admin" />} />
                         <Route path="order" element={userAdmin ? <AdminOrderPage /> : <Navigate to="/admin" />} />
                     </Route>
+
+                    <Route path="/payment/success" element={<PaymentSuccess/>}/>
+                    <Route path="/payment/cancel" element={<PaymentCancel/>}/>
+
+                    <Route path="*" element={<NotFound/>}></Route>
                 </Routes>
             </BrowserRouter>
         </>
