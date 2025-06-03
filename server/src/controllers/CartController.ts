@@ -1,6 +1,7 @@
 import {Request, Response} from 'express'
 import prisma from '../lib/db';
 import cartUpdater from '../utils/cartUpdater';
+
 const getCartByUserId = async (req: Request, res: Response) =>{
     const { id: userId } = req.params;
 

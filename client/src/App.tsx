@@ -24,6 +24,7 @@ const AdminOrderPage = lazy(() => import('./pages/Admin/OrderPage'));
 const CartPage = lazy(() => import('./pages/Customer/CartPage'));
 const ShopPage = lazy(() => import('./pages/Customer/ShopPage'));
 const ProfilePage = lazy(() => import('./pages/Customer/ProfilePage'))
+const OrderHistoryPage = lazy(() => import('./pages/Customer/OrderHistory'))
 
 const App = () =>{
 
@@ -40,6 +41,7 @@ const App = () =>{
                         <Route path="/cart" element={userCustomer ? <CartPage/> : <Navigate to="/"/> }></Route>  
                         <Route path="/product/:id" element={<ProductItem/>}></Route>
                         <Route path="/profile" element={userCustomer ? <ProfilePage/> : <Navigate to="/"/> }></Route>  
+                         <Route path="/order-history" element={userCustomer ? <OrderHistoryPage/> : <Navigate to="/"/> }></Route>  
                         
                     </Route>
                     <Route path="/sign-in" element={ userCustomer ? <Navigate to="/"/> : <SignIn/>}></Route>

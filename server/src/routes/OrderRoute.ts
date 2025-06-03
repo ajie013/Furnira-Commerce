@@ -5,6 +5,7 @@ import authCustomer from '../middleware/authCustomer';
 const orderRouter = express();
 
 orderRouter.post('/checkout', orderController.createCheckoutSession);
+orderRouter.get('/:id', orderController.getOrderHistory)
 orderRouter.post('/save-order', authCustomer ,orderController.saveOrder)
 
 export default orderRouter

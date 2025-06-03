@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const ProfilePage = () => {
-  const { userCustomer } = userCustomerAuthStore();
+  const { userCustomer, checkCustomerAuth } = userCustomerAuthStore();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -46,7 +46,8 @@ const ProfilePage = () => {
       await updateUserApi(userCustomer.userId,formData)
   
       setIsEditing(false);
-      toast.success("Profile updated!")
+      toast.success("Profile updated!");
+      checkCustomerAuth();
     } catch (error) {
       console.error("Failed to update user:", error);
     }

@@ -3,14 +3,6 @@ import { Request, Response } from "express";
 import prisma from "../lib/db"; // your existing prisma setup
 import updateCart from "../utils/cartUpdater";
 
-interface OrderItems{
-    orderId: string,
-    productId: string,
-    quantity: number,
-    price: number,
-}
-
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil", 
 });
@@ -89,7 +81,6 @@ const saveOrder = async (req: Request, res: Response) => {
       }
     })
 
-
     updateCart(cart.shoppingCartId)
    
   } catch (error) {
@@ -98,5 +89,50 @@ const saveOrder = async (req: Request, res: Response) => {
   }
 };
 
+const getOrderHistory = async (req: Request, res: Response) => {
+  const { id: userId } = req.params;
 
-export { createCheckoutSession, saveOrder }
+  try {
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    const orderHistory = await prisma.order.findMany({
+      where: { userId },
+      include: {
+        orderItems: {
+          include: {
+            product: {
+              include: {
+                Category: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const updatedOrderHistory = orderHistory.map((order) => ({
+      ...order,
+      orderItems: order.orderItems.map((item) => ({
+        ...item,
+        product: {
+          ...item.product,
+          price: Number(item.product.price), // optional: convert price
+          image: item.product.image
+            ? `http://localhost:8080/public/${item.product.image}`
+            : null,
+          category: item.product.Category.name,
+        },
+      })),
+    }));
+
+    res.status(200).json(updatedOrderHistory);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Something went wrong!' });
+  }
+};
+
+
+export { createCheckoutSession, saveOrder, getOrderHistory }

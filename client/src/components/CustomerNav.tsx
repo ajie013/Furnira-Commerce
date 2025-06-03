@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 
 const CustomerNav = () => {
 
-    const { userCustomer, setUserCustomer } = userCustomerAuthStore();
+    const { userCustomer, setUserCustomer, checkCustomerAuth } = userCustomerAuthStore();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
@@ -52,8 +52,8 @@ const CustomerNav = () => {
     const navItem  =  [
         { name: 'Home', path: '/' },
         { name: 'Shop', path: '/shop' },
-        { name: 'About', path: '/about' },
-        { name: 'Contact', path: '/contact' }
+        // { name: 'About', path: '/about' },
+        // { name: 'Contact', path: '/contact' }
     ]
 
     return (
@@ -84,11 +84,11 @@ const CustomerNav = () => {
                          
                             className="text-gray-700 hover:text-[#FF9900] transition focus:outline-none"
                         > */}
-                            <User className="w-5 h-5 cursor-pointer text-gray-700 hover:text-[#FF9900] transition focus:outline-none"    onClick={toggleDropdown}/>
+                            <User className={`text-gray-700 p-2 hover:text-[#FF9900] rounded-full transition ${pathname === "/profile" || pathname === "/order-history" ? "bg-[#FF9900] hover:text-black" : ""} cursor-pointer size-9`}   onClick={toggleDropdown}/>
                         {/* </button> */}
 
                         {dropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-[1000 ]">
                                 <div className="px-4 py-2 text-sm tracking-wider text-[#FF9900] font-medium">
                                     {`${userCustomer.firstName} ${userCustomer.lastName}` || 'Customer'}
                                 </div>
@@ -99,7 +99,7 @@ const CustomerNav = () => {
                                     Profile
                                 </Link>
                                 <Link
-                                    to="/orders"
+                                    to="/order-history"
                                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 >
                                     Order History
