@@ -10,12 +10,14 @@ import toast from "react-hot-toast";
 
 const ProfilePage = () => {
   const { userCustomer, checkCustomerAuth } = userCustomerAuthStore();
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phoneNumber: "",
   });
+
   const [isEditing, setIsEditing] = useState(false);
 
   const { data: userData, isLoading } = useQuery({
@@ -41,15 +43,13 @@ const ProfilePage = () => {
 
   const handleSave = async () => {
     try {
-
-   
-      await updateUserApi(userCustomer.userId,formData)
-  
+      await updateUserApi(userCustomer.userId, formData);
       setIsEditing(false);
       toast.success("Profile updated!");
       checkCustomerAuth();
     } catch (error) {
       console.error("Failed to update user:", error);
+      toast.error("Failed to update profile.");
     }
   };
 
@@ -65,6 +65,7 @@ const ProfilePage = () => {
     <div className="w-full flex justify-center items-center">
       <div className="shadow border border-gray-300 w-[450px] max-w-[450px] p-6 mt-5">
         <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
+
         <form className="space-y-4">
           <div>
             <Label htmlFor="firstName">First Name</Label>
@@ -77,6 +78,7 @@ const ProfilePage = () => {
               disabled={!isEditing}
             />
           </div>
+
           <div>
             <Label htmlFor="lastName">Last Name</Label>
             <Input
@@ -88,6 +90,7 @@ const ProfilePage = () => {
               disabled={!isEditing}
             />
           </div>
+
           <div>
             <Label htmlFor="email">Email</Label>
             <Input
@@ -99,6 +102,7 @@ const ProfilePage = () => {
               disabled={!isEditing}
             />
           </div>
+
           <div>
             <Label htmlFor="phoneNumber">Phone Number</Label>
             <Input
@@ -110,6 +114,7 @@ const ProfilePage = () => {
               disabled={!isEditing}
             />
           </div>
+
           <div className="flex justify-end space-x-2 mt-4">
             {isEditing ? (
               <>

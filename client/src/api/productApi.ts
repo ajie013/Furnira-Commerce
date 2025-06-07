@@ -2,15 +2,7 @@ import axiosInstance from "@/lib/axios";
 import type { AddProductFormData, Product } from "@/types/product";
 
 
-const getAllProductsApi = async () : Promise<Product[]> => {
-
-    await new Promise ((resolve, reject) =>{
-        setTimeout(() => {
-            resolve('')
-        }, 2000);
-    })
-   
-   
+const getAllProductsApi = async () : Promise<Product[]> => {   
     const productList = await axiosInstance.get('/product/product-list', );
 
     return productList.data;
@@ -18,6 +10,7 @@ const getAllProductsApi = async () : Promise<Product[]> => {
 
 const getProductByIdApi = async (productId: string) => {
     const product = await axiosInstance.get(`/product/${productId}`);
+
     return product.data;
 };
 
@@ -65,6 +58,7 @@ const updateProductApi = async (productId: string, formData: AddProductFormData,
 
 const deleteProductApi = async (productId: string) => {
     const res = await axiosInstance.delete(`/product/${productId}`);
+    
     return res.data;
 };
 

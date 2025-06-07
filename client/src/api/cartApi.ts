@@ -21,4 +21,10 @@ const deleteCartItemApi = async (cartItemId: string) =>{
     return res.data
 }
 
-export {addCartItemApi, getCartApi, deleteCartItemApi}
+const updateCartItemApi = async (cartItemId: string, quantity: number) => {
+    const res = await axiosInstance.put(`/cart/${cartItemId}`, { quantity });
+
+    return res.data;
+}
+
+export {addCartItemApi, getCartApi, deleteCartItemApi, updateCartItemApi}

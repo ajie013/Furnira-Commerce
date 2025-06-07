@@ -1,10 +1,10 @@
 import { getAllProductsApi } from '@/api/productApi';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import  { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getAllCategoriesApi } from '@/api/categoryApi';
 import type { Category } from '@/types/category';
 import formatCurrency from '@/utils/currencyConverter';
@@ -16,23 +16,26 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { addCartItemApi } from '@/api/cartApi';
+import toast from 'react-hot-toast';
+import userCustomerAuthStore from '@/store/useCustomerAuthStore';
+import unavailableImage from '@/assets/unavailable-image.jpg';
 
 const ShopPage = () => {
-  setTimeout(() => {
-    
-  }, );
-    const { data: productList, isLoading: isLoadingProduct } = useQuery({
+    const navigation = useNavigate();
+    const { userCustomer } = userCustomerAuthStore();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('All');
+  
+    const { data: productList, isLoading: isLoadingProduct, error: errorProductList } = useQuery({
         queryKey: ['product-list'],
         queryFn: () => getAllProductsApi(),
     });
 
-    const { data: categorylist, isLoading: isLoadingCategory } = useQuery({
+    const { data: categorylist, isLoading: isLoadingCategory, error: errorCategoryList } = useQuery({
         queryKey: ['category-list'],
         queryFn: () => getAllCategoriesApi(),
     });
-
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('All');
 
     const filteredProducts = productList?.filter((product) => {
         const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -42,9 +45,45 @@ const ShopPage = () => {
         return matchesSearch && matchesCategory;
     });
 
+    const addItemMutation = useMutation({
+        mutationFn: async (data: any) => addCartItemApi(userCustomer.userId, data ),
+        onSuccess: (res: any) => {
+            toast.success(res.message);
+        },  
+        onError: (error: any) => {
+            toast.error(error.response.data.message);
+        }
+    });
+
+    const addToCart = (e: React.MouseEvent<HTMLButtonElement>, productId: string, price: number) => {
+        e.stopPropagation();
+        if (!userCustomer) {
+            return toast.error('Please sign in to your account first');
+        }   
+    
+        addItemMutation.mutate({
+            productId,
+            price: Number(price),
+            quantity: 1
+        });
+    }
+
+    const viewProduct = (e: React.MouseEvent<HTMLDivElement> ,productId: string) => {
+     
+        navigation(`/product/${productId}`);
+    }
+
+    if(errorProductList)    {   
+        return <p className="text-red-500">Failed to load products. Please try again later.</p>;
+    }
+
+    if(errorCategoryList) {
+        return <p className="text-red-500">Failed to load categories. Please try again later.</p>;
+    }
+            
     return (
         <div className="bg-gray-100 min-h-screen py-2 px-4 w-full">
-            <header className="z-100 sticky  mx-auto mb-8 flex flex-col gap-4  top-20 bg-white p-4 shadow-lg">
+            <header className="z-10 sticky  mx-auto mb-8 flex flex-col gap-4  top-20 bg-white p-4 shadow-lg">
                 <div className="flex gap-4 justify-between items-center w-full">
                     {/* Search Bar with Icon */}
                     <div className="relative w-full">
@@ -103,11 +142,13 @@ const ShopPage = () => {
                     ))
                     : filteredProducts && filteredProducts?.length >= 1 ? filteredProducts?.map((product) => (
                         <div
+                            onClick={(event) => viewProduct(event,product.productId)}
                             key={product.productId}
-                            className="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition"
+                            className="cursor-pointer bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition"
                         >
                             <img
-                                src={product.image || 'https://via.placeholder.com/300'}
+                                src={product.image || unavailableImage}
+                                loading='lazy'
                                 alt={product.name}
                                 className="w-full h-48 object-cover rounded-t-lg"
                             />
@@ -117,11 +158,11 @@ const ShopPage = () => {
                                     <span className="text-lg font-bold text-[#FF9900]">
                                         {formatCurrency(product.price)}
                                     </span>
-                                    <Link to={`/product/${product.productId}`}>
-                                        <Button className="bg-[#FF9900] hover:bg-[#ff9900bc] text-white py-2 px-4 rounded">
-                                            View Details
-                                        </Button>
-                                    </Link>
+                                  
+                                    <Button onClick={(event) => addToCart(event,product.productId, product.price)} className="bg-[#FF9900] hover:bg-[#ff9900bc] text-white py-2 px-4 rounded">
+                                        Add to Cart
+                                    </Button>
+                                    
                                 </div>
                             </div>
                         </div>

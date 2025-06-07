@@ -72,7 +72,7 @@ const AddCategory: React.FC<AddCategoryProps> = ({ refetch, open, onOpenChange }
                                 />
                             </div>
 
-                            {/* Submit Button */}
+                        
                             <Button 
                                 className="w-full mt-4 p-2"
                                 disabled={addCategoryMutation.isPending}

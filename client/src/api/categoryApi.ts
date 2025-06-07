@@ -1,6 +1,5 @@
 import axiosInstance from "@/lib/axios";
 
-
 const getAllCategoriesApi = async () =>{
     const categoryList = await axiosInstance.get('/category/category-list')
        
@@ -8,14 +7,12 @@ const getAllCategoriesApi = async () =>{
 }
 
 const getCategoryByIdApi = async (categoryId: string) =>{
-
     const category = await axiosInstance.get(`/category/${categoryId}`)
        
     return category.data
 }
 
 const createCategoryApi = async ( name: string) => {
-
     const res = await axiosInstance.post('/category', {
         name
     });

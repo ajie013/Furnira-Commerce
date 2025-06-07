@@ -7,5 +7,7 @@ const orderRouter = express();
 orderRouter.post('/checkout', orderController.createCheckoutSession);
 orderRouter.get('/:id', orderController.getOrderHistory)
 orderRouter.post('/save-order', authCustomer ,orderController.saveOrder)
+orderRouter.get('/', orderController.getAllOrders)
+orderRouter.put('/:id', orderController.updateOrderStatus)
 
 export default orderRouter

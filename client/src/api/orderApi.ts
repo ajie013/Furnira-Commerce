@@ -14,4 +14,15 @@ const getOrderHistory = async (userId: string) =>{
     return res.data
 }
 
-export { addOrderApi, getOrderHistory}
+const getAllOrdersApi = async () => {
+    const res = await axiosInstance.get('/order');
+    console.log(res.data);
+    return res.data;
+}
+
+const updateOrderStatusApi = async (orderId: string, newStatus: string) => {
+    const res = await axiosInstance.put(`/order/${orderId}`, { status: newStatus });
+    return res.data;
+}
+
+export { addOrderApi, getOrderHistory, getAllOrdersApi, updateOrderStatusApi}

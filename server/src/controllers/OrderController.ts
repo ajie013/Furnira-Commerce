@@ -94,7 +94,8 @@ const getOrderHistory = async (req: Request, res: Response) => {
 
   try {
     if (!userId) {
-      return res.status(400).json({ message: 'User ID is required' });
+       res.status(400).json({ message: 'User ID is required' });
+       return;
     }
 
     const orderHistory = await prisma.order.findMany({
@@ -134,5 +135,48 @@ const getOrderHistory = async (req: Request, res: Response) => {
   }
 };
 
+const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const orders = await prisma.order.findMany({
+      include: {
+        user: true,
+        orderItems: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
 
-export { createCheckoutSession, saveOrder, getOrderHistory }
+    res.status(200).json(orders);
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Something went wrong!' });
+  }
+}
+
+const updateOrderStatus = async (req: Request, res: Response) => {
+  const { id: orderId } = req.params;
+  const { status } = req.body;
+  try {
+    if (!orderId || !status) {
+      res.status(400).json({ message: 'Order ID and status are required' });
+      return;
+    }
+
+    const updatedOrder = await prisma.order.update({
+      where: { orderId },
+      data: { status },
+    });
+
+    res.status(200).json(updatedOrder);
+  }
+
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Something went wrong!' });
+  }
+}
+
+export { createCheckoutSession, saveOrder, getOrderHistory, getAllOrders, updateOrderStatus }

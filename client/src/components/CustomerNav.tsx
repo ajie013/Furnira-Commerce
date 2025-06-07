@@ -5,6 +5,7 @@ import userCustomerAuthStore from '@/store/useCustomerAuthStore';
 import { useMutation } from '@tanstack/react-query';
 import { signOutApi } from '@/api/authApi';
 import toast from 'react-hot-toast';
+import { addCartItemApi } from '@/api/cartApi';
 
 const CustomerNav = () => {
 
@@ -55,6 +56,8 @@ const CustomerNav = () => {
         // { name: 'About', path: '/about' },
         // { name: 'Contact', path: '/contact' }
     ]
+
+   
 
     return (
         <header className="bg-white shadow sticky top-0 z-50">

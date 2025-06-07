@@ -166,8 +166,7 @@ const ProductPage = () => {
     if (isLoading) {
         return <Loader className="animate-spin size-10" />;
     }
-
-        
+      
     if (error) {
         return <div className="text-red-500 p-4 rounded">An error occurred while loading products. Please try again later.</div>;
     }

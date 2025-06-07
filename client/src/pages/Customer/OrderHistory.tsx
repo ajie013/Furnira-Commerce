@@ -76,8 +76,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
       {isExpanded && (
         <div className="border-t pt-4 space-y-4">
+          
           {order.orderItems.map((item, index) => (
             <div key={index} className="flex items-center gap-4 bg-gray-50 p-4 rounded-md shadow-sm">
+              
               <img
                 src={item.product.image || 'https://via.placeholder.com/100'}
                 alt={item.product.name}

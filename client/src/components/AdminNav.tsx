@@ -1,30 +1,71 @@
-import { NavLink } from "react-router-dom";
+import { signOutApi } from "@/api/authApi";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
+import { LogOut } from "lucide-react";
+import useAdminAuthStore from "@/store/useAdminAuthStore";
 
 const AdminNav = () => {
-  return (
-      <div className="w-full shadow bg-[#000] p-3 h-[60px] fixed top-0 left-0 flex items-center justify-between text-white z-50">
-          <div className="text-lg font-bold tracking-wide">🛍️ ShopAdmin</div>
-          
-          <ul className="flex gap-2">
-            <li>
-                <NavLink to="/admin/dashboard">Dashboard</NavLink>
-            </li>
-            <li>
-                <NavLink to="/admin/product">Product</NavLink>
-            </li>
-            <li>
-                <NavLink to="/admin/category">Category</NavLink>
-            </li>
-            <li>
-                <NavLink to="/admin/order">Order</NavLink>
-            </li>
-            <li>
-                <NavLink to="/admin/user">User</NavLink>
-            </li>
-          </ul>
-      </div>
-  );
+    const navigate = useNavigate();
+    const {userAdmin, setUserAdmin} = useAdminAuthStore()
+
+    const signOutMutation = useMutation({
+        mutationFn: async () => await signOutApi("Admin"),
+        onSuccess: () => {
+
+            toast.success("Sign-out successful");
+            navigate("/admin");
+            setUserAdmin(null);
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Sign-out failed");
+        },
+    });
+
+    const handleSignOut = () => signOutMutation.mutate();
+
+    return (
+        <nav className="w-full shadow bg-[#FF9900] text-white fixed top-0 left-0 z-50 h-[60px] px-6 flex items-center justify-between">
+            <div className="text-xl font-semibold tracking-wide flex items-center gap-1">
+                🛍️ <span>ShopAdmin</span>
+            </div>
+            { userAdmin &&    <ul className="flex items-center gap-6 text-sm font-medium">
+                {[
+                   
+                    { label: "Product", to: "/admin/product" },
+                    { label: "Category", to: "/admin/category" },
+                    { label: "Order", to: "/admin/order" },
+                ].map((item) => (
+                    <li key={item.to}>
+                        <NavLink
+                            to={item.to}
+                            className={({ isActive }) =>
+                                `transition px-2 py-1 rounded ${
+                                    isActive
+                                        ? "text-gray-900 font-semibold bg-white"
+                                        : "text-white hover:text-gray-900 hover:bg-white/20"
+                                }`
+                            }
+                        >
+                            {item.label}
+                        </NavLink>
+                    </li>
+                ))}
+                <li>
+                    <Button
+                        onClick={handleSignOut}
+                        className="bg-white text-[#FF9900] hover:bg-white/90 transition flex items-center gap-2 font-semibold"
+                    >
+                        <LogOut size={16} />
+                        Sign Out
+                    </Button>
+                </li>
+            </ul>}
+
+         
+        </nav>
+    );
 };
 
-
-export default AdminNav
+export default AdminNav;
