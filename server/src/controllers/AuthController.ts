@@ -16,6 +16,7 @@ interface NewUser{
 const signUp =  async (req: Request, res: Response) =>{
     const user: NewUser = req.body;
 
+    console.log(req.body)
     try {
 
         const isUsernameExist = await prisma.user.findUnique({

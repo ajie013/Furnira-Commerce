@@ -143,6 +143,13 @@ const SignIn = () => {
                             )}
                         </Button>
                     </form>
+
+                     <p className="text-sm text-center text-gray-600">
+                                            No account?{' '}
+                                            <Link to="/sign-up" className="text-[#FF9900] font-medium">
+                                                Sign up
+                                            </Link>
+                                        </p>
                 </div>
             </div>
         </>

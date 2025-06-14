@@ -13,6 +13,7 @@ import PaymentCancel from './pages/Customer/PaymentCancel';
 
 import useAdminAuthStore from './store/useAdminAuthStore';
 import userCustomerAuthStore from './store/useCustomerAuthStore';
+import SignUpPage from './pages/Customer/SignUpPage';
 
 // Admin Pages
 
@@ -55,6 +56,10 @@ const App = () => {
                 <Route
                     path="/sign-in"
                     element={userCustomer ? <Navigate to="/" /> : <SignIn />}
+                />
+                 <Route
+                    path="/sign-up"
+                    element={userCustomer ? <Navigate to="/" /> : <SignUpPage />}
                 />
 
                 {/* Admin Routes */}

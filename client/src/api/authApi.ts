@@ -1,9 +1,15 @@
 import axiosInstance from "@/lib/axios";
-import type { SignInFormData } from "@/types/auth";
+import type { SignInFormData, SignUpFormData } from "@/types/auth";
 import toast from "react-hot-toast";
 
 const checkAdminAuthApi = async () =>{
     const res = await axiosInstance.get('/auth/check-admin');
+
+    return res.data;
+}
+
+const signUpApi = async (data: SignUpFormData) => {
+    const res = await axiosInstance.post('/auth/sign-up', data);
 
     return res.data;
 }
@@ -27,4 +33,4 @@ const signOutApi = async (role: string) =>{
 
 
 
-export { checkAdminAuthApi, signInApi, checkCustomerAuthApi, signOutApi}
+export { checkAdminAuthApi, signInApi, checkCustomerAuthApi, signOutApi, signUpApi}
